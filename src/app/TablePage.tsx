@@ -1,7 +1,7 @@
 import NewGridTable from '@components/grid-form/NewGridTable'
 import { ICellRendererParams } from 'ag-grid-community'
 
-function App() {
+export default function TablePage() {
 
   return (
     <div style={{ width: '500px', height: '500px' }}>
@@ -33,5 +33,3 @@ function App() {
     </div>
   )
 }
-
-export default App
