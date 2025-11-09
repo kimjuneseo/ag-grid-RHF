@@ -1,35 +1,9 @@
-import EgcStyledSelect from '@components/select/EgcStyledSelect';
 import { KeyboardArrowLeft, KeyboardArrowRight } from '@mui/icons-material';
 import {
-    Box, Pagination, PaginationItem, PaginationProps, PaginationRenderItemParams, SelectChangeEvent, styled 
+    Box, MenuItem, Pagination, PaginationItem, PaginationProps, PaginationRenderItemParams, Select, SelectChangeEvent 
 } from '@mui/material';
 import { PaginationDataProps } from '@type/table.type';
 import { changePagination } from '@utils/table.util';
-import { getTheme } from '@utils/theme.util';
-
-// change keyboard arrow left icon color
-const StyledKeyboardArrowLeft = styled(KeyboardArrowLeft)(() => {
-    const theme = getTheme();
-
-    return {
-        fill: theme.palette.primary.main,
-        '&:hover': {
-            fill: theme.palette.primary.dark
-        }
-    };
-});
-
-// change keyboard arrow right icon color
-const StyledKeyboardArrowRight = styled(KeyboardArrowRight)(() => {
-    const theme = getTheme();
-
-    return {
-        fill: theme.palette.primary.main,
-        '&:hover': {
-            fill: theme.palette.primary.dark
-        }
-    };
-});
 
 /**
  * Render pagination item
@@ -39,8 +13,8 @@ function renderItem(params: PaginationRenderItemParams) {
     return (
         <PaginationItem
             slots={{ 
-                previous: StyledKeyboardArrowLeft, 
-                next: StyledKeyboardArrowRight 
+                previous: KeyboardArrowLeft, 
+                next: KeyboardArrowRight 
             }}
             {...params}
         />
@@ -96,12 +70,14 @@ export default function NewPagination({
     return (
         <Box className="relative flex items-center justify-center w-[100%] h-[48px]">
             <div className="absolute left-[10px]">
-                <EgcStyledSelect 
-                    sx={{ '&.MuiOutlinedInput-root': { width: '80px', height: '28px', borderRadius: '16px', textAlign: 'center' } }}
-                    value={pagination?.rowsPerPage as unknown as string}
-                    selectList={rowPagesOptions}
-                    onChange={handleRowChange}
-                />
+                {/* <select */}
+                <Select onChange={handleRowChange}>
+                    {rowPagesOptions.map((option) => (
+                        <MenuItem key={option.value} value={option.value}>
+                            {option.label}
+                        </MenuItem>
+                    ))}
+                </Select>
             </div>
             <Pagination
                 renderItem={renderItem}

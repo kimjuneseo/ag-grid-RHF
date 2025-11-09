@@ -1,19 +1,15 @@
-import CommonCheckbox from '@components/checkbox/CommonCheckbox';
 import GridAddButton from '@components/grid-form/GridAddButton';
 import GridRemoveButton from '@components/grid-form/GridRemoveButton';
-import NewGridTable from '@components/table/NewGridTable';
+import NewGridTable from '@components/grid-form/NewGridTable';
 import { CommTableValidationColumn, CommValidationProps, GridStatus } from '@type/grid-table.type';
-import { getPageAuth } from '@utils/auth.util';
 import { ColDef, ColGroupDef, ICellRendererParams } from 'ag-grid-community';
 import { AgGridReactProps } from 'ag-grid-react';
-import { lowerCase } from 'lodash';
 import {
-    MutableRefObject, RefObject, useEffect, useMemo, useState
+    RefObject, useEffect, useMemo, useState
 } from 'react';
 import {
     FieldArrayPath, FieldArrayWithId, FieldErrors, FieldValues, FormProvider, Path, PathValue, UseFormReturn
 } from 'react-hook-form';
-import { useTranslation } from 'react-i18next';
 
 const EXCEPTS_KEYS = [
     'no',
@@ -40,7 +36,7 @@ export interface GridFormTableProps<MultiData extends FieldValues, Data extends 
     defaultRows?: Data;
 
     // Existing rows
-    existingRows?: MutableRefObject<Record<string, Data>>;
+    existingRows?: RefObject<Record<string, Data>>;
 
     // Fields used for form handling with react-hook-form
     fields: FieldArrayWithId<MultiData, FieldArrayPath<MultiData>, TKeyName>[];
@@ -100,7 +96,6 @@ export default function GridFormTable<MultiData extends FieldValues, Data extend
     fields,
     isHideAddBtn = false,
     isShowStatus = false,
-    isShowStatusCheckbox = false,
     methods,
     submitRef,
     unique,
@@ -113,8 +108,6 @@ export default function GridFormTable<MultiData extends FieldValues, Data extend
     onRowDataUpdated,
     ...agGridProps
 }: GridFormTableProps<MultiData, Data>) {
-    // hook
-    const { t } = useTranslation();
     // hook-form
     const { watch } = methods;
     const newRows = watch();
@@ -122,16 +115,16 @@ export default function GridFormTable<MultiData extends FieldValues, Data extend
     const [status, setStatus] = useState<Record<string, GridStatus>>({});
     // custom variable
     const statusValue = {
-        '0': {
+        'default': {
             text: '',
             color: ''
         },
-        '1': {
-            text: t('correction'),
+        'modified': {
+            text: '수정',
             color: 'blue'
         },
-        '2': {
-            text: t('add'),
+        'new': {
+            text: '추가',
             color: 'red'
         }
     };
@@ -155,13 +148,13 @@ export default function GridFormTable<MultiData extends FieldValues, Data extend
             if (uniqueId && uniqueId in status === false) {
                 setStatus((prev) => ({
                     ...prev,
-                    [uniqueId]: '0'
+                    [uniqueId]: 'default'
                 }));
             }
             else if (!uniqueId && tableId in status === false) {
                 setStatus((prev) => ({
                     ...prev,
-                    [tableId]: uniqueId ? '0' : '2'
+                    [tableId]: uniqueId ? 'default' : 'new'
                 }));
             }
 
@@ -187,17 +180,14 @@ export default function GridFormTable<MultiData extends FieldValues, Data extend
     };
 
     const columnStatus = {
-        headerName: t('status'),
+        headerName: '상태',
         maxWidth: 75,
         sortable: false,
         cellRenderer: (params: ICellRendererParams) => {
             const data: Data = params.data;
             const statusId = data[unique] || data.id;
 
-            if (statusId in status && isShowStatusCheckbox) {
-                return <CommonCheckbox value={status[statusId] === '2'} />;
-            }
-            else if (statusId in status) {
+            if (statusId in status) {
                 const statusData = statusValue[status[statusId]];
 
                 return <div style={{ color: statusData.color }}>{statusData.text}</div>;
@@ -295,7 +285,7 @@ export default function GridFormTable<MultiData extends FieldValues, Data extend
                         const sortedNew = [...newValue].sort();
 
                         if (JSON.stringify(sortedCurrent) !== JSON.stringify(sortedNew)) {
-                            updateStatus(uniqueId, '1');
+                            updateStatus(uniqueId, 'modified');
                             onFieldsChanged?.(uniqueId);
 
                             isChange = true;
@@ -373,7 +363,7 @@ export default function GridFormTable<MultiData extends FieldValues, Data extend
     return (
         <FormProvider {...methods}>
             <form className="h-full" onSubmit={methods.handleSubmit(handleSubmit, onFormError)}>
-                <div className={`ag-theme-alpine !rounded-[0px] ${lowerCase(getPageAuth().auth)} ${borderMode}`}>
+                <div className={`ag-theme-alpine !rounded-[0px] ${borderMode}`}>
                     <NewGridTable
                         {...agGridProps}
                         rowData={fields}

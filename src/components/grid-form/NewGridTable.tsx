@@ -1,4 +1,3 @@
-// import ExcelDownButton from '@components/button/ExcelDownButton';
 import NewPagination from '@components/pagination/NewPagination';
 import { GridTableProps } from '@type/table.type';
 import { classMerge } from '@utils/css.util';
@@ -7,11 +6,10 @@ import {
 } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
 import { useEffect, useMemo, useRef } from 'react';
-// import { useTranslation } from 'react-i18next';
+
 
 export default function NewGridTable({
     columnDefs,
-    // excelDownProps,
     defaultColDef,
     paginationProps,
     sortProps,
@@ -19,7 +17,6 @@ export default function NewGridTable({
     onGridReady,
     ...others
 }: GridTableProps) {
-    // const { t } = useTranslation();
     const gridRef = useRef<GridApi | null>(null);
     const setSort = sortProps?.setSort;
     const sort = sortProps?.sort;
@@ -27,7 +24,6 @@ export default function NewGridTable({
         wrapText: true,
         autoHeight: true,
         ...columnDef,
-        comparator: customComparator,
         cellRenderer: (params: ICellRendererParams) => {
             // 하단 합계 데이터
             if (params.node.rowPinned) {
@@ -76,8 +72,7 @@ export default function NewGridTable({
     }
 
     /**
-     * Handle sort changed
-     * @param params event source
+     * 정렬 변경 이벤트 처리
      */
     function handleSortChanged(params: SortChangedEvent) {
         const colState = params.api.getColumnState();
@@ -92,8 +87,7 @@ export default function NewGridTable({
     }
 
     /**
-     * Handle when grid has initialised
-     * @param event event source
+     * 그리드 초기화 이벤트 처리
      */
     function handleGridReady(event: GridReadyEvent) {
         gridRef.current = event.api;
@@ -101,11 +95,6 @@ export default function NewGridTable({
         event.api.sizeColumnsToFit();
         renderSort();
         onGridReady?.(event);
-    }
-
-    // Remove ag-grid default sorting
-    function customComparator() {
-        return 0;
     }
 
     return (
@@ -134,10 +123,6 @@ export default function NewGridTable({
                 {...others}
             />
             {paginationProps && <NewPagination paginationProps={paginationProps} /> }
-            {/* {excelDownProps
-            && <div className="!absolute bottom-0 right-[10px] flex items-center h-[48px]">
-                <ExcelDownButton {...excelDownProps} />
-            </div>} */}
         </div>
     );
 }
