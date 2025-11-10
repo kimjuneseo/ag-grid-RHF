@@ -2,7 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -10,7 +9,7 @@
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  /* background-color: #242424; */
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -26,47 +25,6 @@ a {
 
 a:hover {
   color: #535bf2;
-}
-
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-
-@font-face {
-  font-family: 'NotoSans';
-  font-weight: 300;
-  src: url('/fonts/noto-sans-kr/NotoSansCJKkr-Thin.otf');
-}
-
-@font-face {
-  font-family: 'NotoSans';
-  font-weight: 400;
-  src: url('/fonts/noto-sans-kr/NotoSansCJKkr-Light.otf');
-}
-
-@font-face {
-  font-family: 'NotoSans';
-  font-weight: 500;
-  src: url('/fonts/noto-sans-kr/NotoSansCJKkr-Regular.otf');
-}
-
-@font-face {
-  font-family: 'NotoSans';
-  font-weight: 600;
-  src: url('/fonts/noto-sans-kr/NotoSansCJKkr-Medium.otf');
-}
-
-@font-face {
-  font-family: 'NotoSans';
-  font-weight: 700;
-  src: url('/fonts/noto-sans-kr/NotoSansCJKkr-Bold.otf');
-}
-
-@font-face {
-  font-family: 'NotoSans';
-  font-weight: 900;
-  src: url('/fonts/noto-sans-kr/NotoSansCJKkr-Black.otf');
 }
 
 /* main.css */

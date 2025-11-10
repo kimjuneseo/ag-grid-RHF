@@ -3,8 +3,8 @@
 import React from 'react'
 import dynamic from 'next/dynamic'
  
-const App = dynamic(() => import('../App'), { ssr: false })
+const TablePage = dynamic(() => import('./TablePage'), { ssr: false })
  
 export function ClientOnly() {
-  return <App />
+  return <TablePage />
 }

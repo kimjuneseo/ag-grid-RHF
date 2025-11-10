@@ -55,7 +55,7 @@ export default function NewPagination({
      * Handle row per page input changed
      * @param event event source
      */
-    function handleRowChange(event: SelectChangeEvent<string>) {
+    function handleRowChange(event: SelectChangeEvent<string | number>) {
         if (!setPagination) {
             return;
         }
@@ -71,9 +71,9 @@ export default function NewPagination({
         <Box className="relative flex items-center justify-center w-[100%] h-[48px]">
             <div className="absolute left-[10px]">
                 {/* <select */}
-                <Select onChange={handleRowChange}>
+                <Select value={pagination?.rowsPerPage} onChange={handleRowChange}>
                     {rowPagesOptions.map((option) => (
-                        <MenuItem key={option.value} value={option.value}>
+                        <MenuItem key={option.value} value={option.value.toString()}>
                             {option.label}
                         </MenuItem>
                     ))}
