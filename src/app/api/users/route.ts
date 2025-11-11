@@ -44,10 +44,7 @@ export async function POST(request: Request) {
     // 5. Body에서 파라미터를 추출합니다.
     const { currentPage, rowsPerPage } = body.pagination ?? {};
     const sort = body.sort || []; // 👈 정렬 배열
-    
-    const data = [...DUMMY_USERS];
-    const total = data.length;
-    console.log(total/rowsPerPage)
+    const total = DUMMY_USERS.length;
 
     // 6. 정렬 로직 (배열 사용)
     // (AG Grid는 보통 첫 번째 정렬을 우선하므로, sort[0]을 사용)
@@ -55,7 +52,7 @@ export async function POST(request: Request) {
         const { sortName, isASC } = sort[0];
         
         if (sortName === 'name' || sortName === 'phone') {
-            data.sort((a, b) => {
+            DUMMY_USERS.sort((a, b) => {
                 const valA = a[sortName as keyof typeof a]; // 타입 추론
                 const valB = b[sortName as keyof typeof b];
                 
@@ -69,7 +66,7 @@ export async function POST(request: Request) {
     // 7. 페이지네이션
     const startIndex = (currentPage - 1) * rowsPerPage;
     const endIndex = currentPage * rowsPerPage;
-    const paginatedData = data.slice(startIndex, endIndex);
+    const paginatedData = DUMMY_USERS.slice(startIndex, endIndex);
 
     // 8. 응답 반환 (동일)
     return NextResponse.json({

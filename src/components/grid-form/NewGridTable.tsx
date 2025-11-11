@@ -1,6 +1,5 @@
 import NewPagination from '@components/pagination/NewPagination';
 import { GridTableProps } from '@type/table.type';
-import { classMerge } from '@utils/css.util';
 import {
     AllCommunityModule, ColumnState, GridApi, GridReadyEvent, ICellRendererParams, ModuleRegistry, SortChangedEvent
 } from 'ag-grid-community';
@@ -25,26 +24,6 @@ export default function NewGridTable({
         autoHeight: true,
         ...columnDef,
         cellRenderer: (params: ICellRendererParams) => {
-            // 하단 합계 데이터
-            if (params.node.rowPinned) {
-                const rawValue = params.value;
-                const isNumeric = typeof params?.value === 'number' ? true : !isNaN(params?.value?.replaceAll(',', ''));
-
-                // 합계 데이터가 없을시
-                if (rawValue === undefined) {
-                    return;
-                }
-
-                return (<div className={classMerge(
-                    'flex',
-                    // 숫자 오른쪽 정렬, 문자 가운데 정렬
-                    isNumeric ? 'w-full justify-end pinnedCol' : ''
-                )}
-                >
-                    <span className="flex items-center font-bold text-[#424242]">{rawValue}</span>
-                </div>);
-            }
-
             return 'cellRenderer' in columnDef
                 ? columnDef.cellRenderer?.(params) ?? params.value
                 : params.value;

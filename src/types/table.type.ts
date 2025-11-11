@@ -1,4 +1,3 @@
-// import { ExcelDownButtonProps } from '@components/button/ExcelDownButton';
 import { AgGridReactProps } from 'ag-grid-react';
 import { Dispatch, SetStateAction } from 'react';
 
@@ -60,7 +59,4 @@ export interface GridTableProps extends AgGridReactProps {
     
     // sort props
     sortProps?: SortDataProps;
-
-    // 엑셀 다운로드 props
-    // excelDownProps?: ExcelDownButtonProps<T>
 }
