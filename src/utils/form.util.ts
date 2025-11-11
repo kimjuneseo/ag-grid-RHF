@@ -19,9 +19,8 @@ export function formErrors<T extends FieldValues>(
     const error = checkForMessage<T>(errors);
 
     if (error) {
-        // const { addAlert } =  useAlertStore.getState();
         alert(error.message)
-        // addAlert({ message: error.message || '' });
+        
 
         methods.setFocus(error.key);
     }
