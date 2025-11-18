@@ -6,7 +6,7 @@ import NewGridTable from '@components/grid-form/NewGridTable';
 import {
     GridFormParams,
     GridFormTableColumnProps,
-    GridFormTableValidationProps,
+    GridFormTableRHFProps,
     GridStatus,
     GridValues
 } from '@type/grid-form-table.type';
@@ -114,8 +114,6 @@ export default function NewGridFormTable<T extends GridValues>({
     dataDefault,
     dataExisting,
     dataUniqueId,
-    dataUniqueColNm,
-    tableNm,
     hasAddBtn = true,
     hasRemoveBtn = true,
     hasStatusColumn = true,
@@ -167,7 +165,6 @@ export default function NewGridFormTable<T extends GridValues>({
             color: 'blue'
         }
     };
-    const [uniqueColFieldNm, setUniqueColFieldNm] = useState<string | null>(null);
     // ag-grid variables
     const columnDefs = useMemo(() => {
         // 행 추가 컬럼
@@ -209,14 +206,7 @@ export default function NewGridFormTable<T extends GridValues>({
         }] : [];
 
         // 순번 외 컬럼
-        const [noCols, otherCols] = partition(columns, (col) => {
-            // 유효성 코드 컬럼 명이 있고, 테이블에 해당 컬럼 명이 존재할 때 컬럼 헤더명 입력
-            if (dataUniqueColNm && dataUniqueColNm === col.field) {
-                setUniqueColFieldNm(col.headerName ?? null);
-            }
-
-            return col.field?.toLowerCase() === 'no';
-        });
+        const [noCols, otherCols] = partition(columns, (col) => col.field?.toLowerCase() === 'no');
         // 순번 컬럼
         const noCol = noCols[0] || null;  // First 'no' column regardless of position
 
@@ -236,12 +226,12 @@ export default function NewGridFormTable<T extends GridValues>({
 
                     if (render) {
                         const fieldName = `dataForm.${rowId}.${field}` as Path<GridFormParams<T>>;
-                        const validationProps: GridFormTableValidationProps<GridFormParams<T>> = {
+                        const RHFProps: GridFormTableRHFProps<GridFormParams<T>> = {
                             name: fieldName,
                             control: methods.control,
                             inputRef: methods.register(fieldName, { value: fieldValue ?? '' }).ref
                         };
-                        const renderedComponent = render({ methods, params, validationProps });
+                        const renderedComponent = render({ methods, params, RHFProps });
 
                         return renderedComponent && React.cloneElement(renderedComponent, {
                             onChange: (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -330,56 +320,7 @@ export default function NewGridFormTable<T extends GridValues>({
      */
     async function handleFormSubmit(data: GridFormParams<T>) {
         const dataForm = data.dataForm ?? [];
-        // 해당 로직 삭제 후 다른 로직으로 대체하여 추후 문제 없을시 완전 제거 예정
-        // const filterObjectForm = Object.fromEntries(
-        //     Object.entries(dataForm)
-        //         .filter(([key]) => !rowIdRef.current.includes(key))
-        // );
         const filteredData = Object.values(dataForm);
-        const uniqueColTableFieldNm = tableNm ? tableNm + ' ' + uniqueColFieldNm : uniqueColFieldNm; //테이블 명 + 컬럼명
-
-        // 코드 중복성 검사를 위한 컬럼 아이디와 컬럼명이 있을 경우
-        if (dataUniqueColNm && uniqueColTableFieldNm) {
-            // 컬럼 코드 밸류를 키값으로 매핑한 인덱스 맵
-            const dataUniqueColValuesMap: Record<string, [number, number]> = {};
-            // 컬럼 코드 밸류 값으로 매핑한 코드 중복 인덱스 리스트
-            // let duplicatedIndices: [number, number] | null = null;
-
-            for (let index = 0; index < filteredData.length; index++) {
-                const rowData = filteredData[index];
-                const uniqueColValue = rowData[dataUniqueColNm]?.toString()
-                    .trim() as string;
-
-                // 키 값 없을 때 인덱스 초기 값 세팅
-                if (!dataUniqueColValuesMap[uniqueColValue]) {
-                    dataUniqueColValuesMap[uniqueColValue] = [index, -1];
-                }
-                else if (dataUniqueColValuesMap[uniqueColValue][1] === -1) {
-                    dataUniqueColValuesMap[uniqueColValue][1] = index;
-                    // duplicatedIndices = dataUniqueColValuesMap[uniqueColValue];
-
-                    break;
-                }
-            }
-
-            // start, end, col 전부 있을 때 실행
-            // if (duplicatedIndices) {
-            //     addAlert({
-            //         message: getCodeDuplicatedMessage(
-            //             uniqueColTableFieldNm,
-            //             {
-            //                 start: duplicatedIndices[0],
-            //                 end: duplicatedIndices[1],
-            //                 col: uniqueColTableFieldNm
-            //             },
-            //             i18nContext
-            //         )
-            //     });
-
-            //     return;
-            // }
-        }
-
         const cleanedData = filteredData.map((item) => omit(item, ['id', 'rowId', 'status', 'addBtn']));
 
         await onSubmit?.(cleanedData as T[]);
@@ -455,8 +396,6 @@ export default function NewGridFormTable<T extends GridValues>({
             return;
         }
 
-        // 해당 로직 삭제 후 다른 로직으로 대체하여 추후 문제 없을시 완전 제거 예정
-        // rowIdRef.current = [...rowIdRef.current, rowId];
         gridApi.applyTransaction({ remove: [rowNode.data] });
         methods.unregister(`dataForm.${rowId}` as Path<GridFormParams<T>>);
     }

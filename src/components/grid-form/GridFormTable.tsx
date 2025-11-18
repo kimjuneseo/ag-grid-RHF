@@ -4,7 +4,7 @@ import NewGridTable from '@components/grid-form/NewGridTable';
 import {
     GridFormParams,
     GridFormTableColumnProps,
-    GridFormTableValidationProps,
+    GridFormTableRHFProps,
     GridStatus,
     GridValues
 } from '@type/grid-form-table.type';
@@ -229,12 +229,12 @@ export default function GridFormTable<T extends GridValues>({
 
                     if (render) {
                         const fieldName = `dataForm.${currntRowId}.${field}` as Path<GridFormParams<T>>;
-                        const validationProps: GridFormTableValidationProps<GridFormParams<T>> = {
+                        const RHFProps: GridFormTableRHFProps<GridFormParams<T>> = {
                             name: fieldName,
                             control: methods.control,
                             inputRef: methods.register(fieldName, { value: fieldValue ?? '' }).ref
                         };
-                        const renderedComponent = render({ methods, params, validationProps });
+                        const renderedComponent = render({ methods, params, RHFProps });
 
                         content = renderedComponent && React.cloneElement(renderedComponent, {
                             onChange: (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {

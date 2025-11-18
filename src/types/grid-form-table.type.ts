@@ -8,7 +8,7 @@ import { FieldValues, UseFormReturn } from 'react-hook-form';
 // GridApi | null
 export type GridApiType = GridApi | null;
 
-export interface GridFormTableValidationProps<T extends FieldValues> extends FieldProps<T> {
+export interface GridFormTableRHFProps<T extends FieldValues> extends FieldProps<T> {
     // handle input change
     // onChange?: (event: React.ChangeEvent<Element> | Event | SelectChangeEvent<string>) => void;
     onChange?: (event: React.ChangeEvent<Element> | Event) => void;
@@ -24,7 +24,7 @@ export interface GridFormTableColumnProps<T extends FieldValues> extends ColDef 
         params: ICellRendererParams,
 
         // valid data
-        validationProps: GridFormTableValidationProps<GridFormParams<T>>
+        RHFProps: GridFormTableRHFProps<GridFormParams<T>>
     }) => JSX.Element;
 
     // custom field for modal search input

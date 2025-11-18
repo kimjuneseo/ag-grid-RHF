@@ -30,7 +30,7 @@ export interface CommTableValidationColumn<T extends FieldValues = FieldValues, 
     // 출력 타입
     render?: (params: { 
         value: string | number | boolean | undefined, 
-        validationProps: CommValidationProps<T>, 
+        RHFProps: CommRHFProps<T>, 
         params: ICellRendererParams
     }) => JSX.Element;
 
@@ -40,7 +40,7 @@ export interface CommTableValidationColumn<T extends FieldValues = FieldValues, 
     ) => JSX.Element;
 }
 
-export interface CommValidationProps<T extends FieldValues = FieldValues> extends FieldProps<T> {
+export interface CommRHFProps<T extends FieldValues = FieldValues> extends FieldProps<T> {
     id?: string;
     onChange?: ChangeHandler;
 }
