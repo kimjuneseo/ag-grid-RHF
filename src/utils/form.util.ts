@@ -1,7 +1,7 @@
 // import { AddressData } from '@components/modal/AddressModal';
 // import { useAlertStore } from '@store/alert.store';
 import { InputConfigProps } from '@type/common.type';
-import { GridFormParams } from '@type/grid-table.type';
+import { RHFParams } from '@type/grid-table.type';
 import { ChangeEvent } from 'react';
 import {
     FieldErrors, UseFormReturn, FieldValues, Path, PathValue
@@ -101,7 +101,7 @@ export function getMultiParams() {
  * @param methods form methods
  * @param fields form field array
  */
-export function cleanupFieldArray<Data>(methods: UseFormReturn<GridFormParams<Data>>, fields: Data[]) {
+export function cleanupFieldArray<Data>(methods: UseFormReturn<RHFParams<Data>>, fields: Data[]) {
     if (fields.length <= 1) {
         methods.reset({ data: [] });
     }

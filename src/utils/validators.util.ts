@@ -1,6 +1,6 @@
 import { hasBatchim } from '@utils/korean.util';
 import { FieldValues, Path, PathValue, UseFormReturn } from 'react-hook-form';
-import { GridFormParams } from '@type/grid-form-table.type';
+import { RHFParams } from '@type/grid-form-table.type';
 import { GridFormFieldName } from '@type/grid-table.type';
 import React from 'react';
 import { formatOrdinal } from '@utils/english.util';
@@ -207,7 +207,7 @@ export function autoRegisterFieldNamesFromParams<
   T extends object,
   K extends keyof T & string = keyof T & string
 >(
-    methods: UseFormReturn<GridFormParams<T>>,
+    methods: UseFormReturn<RHFParams<T>>,
     params: { data: T & { rowId: string } },
     keys: K[],
     defaultValues?: Partial<T>
@@ -218,8 +218,8 @@ export function autoRegisterFieldNamesFromParams<
     const basePath = `dataForm.${rowId}` as const;
 
     keys.forEach((field) => {
-        const fieldPath = `${basePath}.${field}` as Path<GridFormParams<T>>;
-        type FieldValue = PathValue<GridFormParams<T>, typeof fieldPath>;
+        const fieldPath = `${basePath}.${field}` as Path<RHFParams<T>>;
+        type FieldValue = PathValue<RHFParams<T>, typeof fieldPath>;
 
         const raw = data[field] ?? defaultValues?.[field];
         const value = (raw ?? '') as FieldValue;

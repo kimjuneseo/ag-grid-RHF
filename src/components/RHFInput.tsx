@@ -1,3 +1,4 @@
+import { classMerge } from "@utils/css.util";
 import { Control, FieldValues, UseControllerProps, useController } from "react-hook-form";
 
 
@@ -17,7 +18,7 @@ export default function RHFInput<T extends FieldValues>({
     ...props
 }: FieldProps<T> & Omit<React.InputHTMLAttributes<HTMLInputElement>, 'name'>) {
     // React Hook Form의 useController를 사용하여 상태 관리
-    const { field: { value, onChange } } = useController({ name, control, rules });
+    const { field: { value, onChange }, fieldState: { error } } = useController({ name, control, rules });
 
     /**
      * Handle selection changed
@@ -32,7 +33,16 @@ export default function RHFInput<T extends FieldValues>({
         <>
             <input
                 {...props} 
-                className="w-full h-20"
+                className={classMerge("w-full", 
+                    props.className,
+                    error ? 'border-[red] border' : ''
+                )}
+                style={{
+                    width: '100%',
+                    borderRadius: '5px',
+                    outline: 'NONE',
+                    padding: '4px'
+                }}
                 type="text" 
                 value={value as string} 
                 onChange={handleChange}

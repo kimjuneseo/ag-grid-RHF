@@ -32,6 +32,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.36.0",
+    "@hookform/devtools": "^4.4.0",
     "@tailwindcss/postcss": "^4.1.17",
     "@types/lodash": "^4.17.20",
     "@types/node": "^24.6.0",

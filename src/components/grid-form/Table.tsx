@@ -7,7 +7,7 @@ import { AgGridReact } from 'ag-grid-react';
 import { useEffect, useMemo, useRef } from 'react';
 
 
-export default function NewGridTable({
+export default function Table({
     columnDefs,
     defaultColDef,
     paginationProps,

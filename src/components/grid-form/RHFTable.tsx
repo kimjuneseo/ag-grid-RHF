@@ -1,23 +1,15 @@
-import GridAddButton from '@components/grid-form/GridAddButton';
-import GridRemoveButton from '@components/grid-form/GridRemoveButton';
-import NewGridTable from '@components/grid-form/NewGridTable';
-// import { useAlertStore } from '@store/alert.store';
-// import { useConfirmStore } from '@store/confirm.store';
+import NewGridTable from '@components/grid-form/Table';
 import {
-    GridFormParams,
-    GridFormTableColumnProps,
-    GridFormTableRHFProps,
+    RHFParams,
+    RHFTableColumnProps,
+    TableRHFProps,
     GridStatus,
     GridValues
 } from '@type/grid-form-table.type';
 import { Answer } from '@type/http'
-import { SortDataProps } from '@type/table.type';
-import { gridGetHasUnsavedChangeGrid } from '@utils/ag-grid.util';
-// import { getPageAuth } from '@utils/auth.util';
 import { formErrors } from '@utils/form.util';
 import {
     ColDef, ColGroupDef, GridApi, GridReadyEvent, ICellRendererParams,
-    SortChangedEvent, ColumnState,
     RowDragMoveEvent,
     RowClickedEvent
 } from 'ag-grid-community';
@@ -30,100 +22,69 @@ import React, {
 import {
     FieldErrors, FieldValues, Path, useForm, UseFormReturn
 } from 'react-hook-form';
-// import { useTranslation } from 'react-i18next';
 import { v4 as uuidv4 } from 'uuid';
-// import { getCodeDuplicatedMessage } from '@utils/validators.util';
-// 디버깅용 삭제 x
+// 디버깅용
 // import { DevTool } from '@hookform/devtools';
 
-export interface GridFormTableProps<T extends FieldValues> extends AgGridReactProps {
-    // 테이블 보더 행, 열
-    borderMode?: 'insert' | 'select';
+export interface RHFTableProps<T extends FieldValues> extends AgGridReactProps {
+    // 유효성 검사 속성이 포함된 테이블 컬럼
+    columns: RHFTableColumnProps<T>[];
 
-    // Columns for the table with validation properties
-    columns: GridFormTableColumnProps<T>[];
-
-    // Check to set an add column order
+    // 추가 컬럼 순서 설정
     columnAddOrder?: 'first' | 'last';
 
-    // Default parameter for adding rows
+    // 행 추가 시 기본 파라미터
     dataDefault: T;
 
-    // Existing rows
+    // 기존 행 데이터
     dataExisting: T[];
 
-    // Unique key in data for identifying rows
+    // 행 식별을 위한 데이터의 고유 키
     dataUniqueId: keyof T;
 
-    // Unique column name in data for validation of rows
+    // 행 유효성 검사를 위한 고유 컬럼명
     dataUniqueColNm?: keyof T;
 
-    // Table name
+    // 테이블명
     tableNm?: string;
 
-    // Show add button
-    hasAddBtn?: boolean;
-
-    // Show remove button
-    hasRemoveBtn?: boolean;
-
-    // Show status column
-    hasStatusColumn?: boolean;
-
-    // Draggable table
-    isDraggable?: boolean;
-
-    // Optional reference for submit button
+    // 제출 버튼에 대한 선택적 참조
     submitRef: RefObject<HTMLButtonElement>;
 
-    // sort props
-    sortProps?: SortDataProps;
-
-    // Custom add function
+    // 커스텀 추가 함수
     customAddFunction?: () => void;
 
-    // Custom delete function
+    // 커스텀 삭제 함수
     customDeleteFunction?: (id: string | string[], params: ICellRendererParams) => Promise<string>;
 
-    // Delete function
+    // 삭제 함수
     deleteFunction?: (id: string | string[]) => Promise<AxiosResponse<Answer<string>>>
 
-    // Unique conditional function to hide remove btn
-    isHideRemoveBtn?: (value: T) => boolean;
+    // 삭제 처리 함수
+    onDelete?: (id?: string, methods?: UseFormReturn<RHFParams<T>>, params?: ICellRendererParams) => Promise<void>;
 
-    // Handle delete function
-    onDelete?: (id?: string, methods?: UseFormReturn<GridFormParams<T>>, params?: ICellRendererParams) => Promise<void>;
-
-    // Handle form error
+    // 폼 에러 처리 함수
     onFormError?: (errors: FieldErrors) => void;
 
-    // Handle form methods values
-    onFormMethodsReady?: (methods: UseFormReturn<GridFormParams<T>>) => void;
+    // 폼 메소드 값 처리 함수
+    onFormMethodsReady?: (methods: UseFormReturn<RHFParams<T>>) => void;
 
-    // Handle submit function
+    // 제출 처리 함수
     onSubmit?: (params: T[]) => Promise<void>;
 
-    // Handle GridReady function
+    // 그리드 준비 완료 처리 함수
     onGridReady?:  (params: GridReadyEvent) => void;
 }
 
-export default function NewGridFormTable<T extends GridValues>({
-    borderMode = 'insert',
+export default function RHFTable<T extends GridValues>({
     columns,
-    columnAddOrder = 'first',
     dataDefault,
     dataExisting,
     dataUniqueId,
-    hasAddBtn = true,
-    hasRemoveBtn = true,
-    hasStatusColumn = true,
-    isDraggable = false,
     submitRef,
-    sortProps,
     customAddFunction,
     customDeleteFunction,
     deleteFunction,
-    isHideRemoveBtn,
     onDelete,
     onFormError,
     onFormMethodsReady,
@@ -131,26 +92,16 @@ export default function NewGridFormTable<T extends GridValues>({
     onGridReady,
     onRowClicked,
     ...agGridProps
-}: GridFormTableProps<T>) {
-    // hook
-    // const i18nContext = useTranslation();
-    // const { t } = i18nContext;
+}: RHFTableProps<T>) {
     // ref
-    // 해당 로직 삭제 후 다른 로직으로 대체하여 추후 문제 없을시 완전 제거 예정
-    // const rowIdRef = useRef<string[]>([]); // This ref is used for tracking row IDs across renders without causing re-renders.
     const onDeleteRef = useRef(onDelete); // onDelete 함수가 항상 최신 상태를 유지하도록 하기 위한 ref
-    const prevSortModelRef = useRef<ColumnState[]>([]); // 이전 정렬 상태 저장용 ref
-    const isRestoringSortRef = useRef(false); // 정렬 복구 중인지 여부
-    // store
-    // const { addAlert } = useAlertStore();
-    // const { addConfirm } = useConfirmStore();
     // hook-form
-    const methods = useForm<GridFormParams<T>>({
+    const methods = useForm<RHFParams<T>>({
         defaultValues: { dataForm: {} }
     });
     // state
     const [gridApi, setGridApi] = useState<GridApi | null>(null);
-    // status mapping for grid display
+    // 그리드 표시를 위한 상태 매핑
     const statusValue = {
         'default': {
             text: '',
@@ -165,35 +116,43 @@ export default function NewGridFormTable<T extends GridValues>({
             color: 'blue'
         }
     };
-    // ag-grid variables
+    // ag-grid 변수
     const columnDefs = useMemo(() => {
-        // 행 추가 컬럼
-        const columnAdd = (hasAddBtn || hasRemoveBtn) ? [{
+        // 삭제 버튼 컬럼
+        const columnAdd = [{
             field: 'addBtn',
             headerName: '',
             cellClass: 'justify-center items-center',
-            minWidth: 60,
-            maxWidth: 60,
+            minWidth: 80,
+            maxWidth: 80,
             sortable: false,
-            // '-' 행 삭제 버튼
-            ...(hasRemoveBtn && {
-                cellRenderer: (params: ICellRendererParams) => {
-                    const data: T = params.data;
-                    const rowId = data.rowId;
+            cellRenderer: (params: ICellRendererParams) => {
+                const data: T = params.data;
+                const rowId = data.rowId as string;
 
-                    return rowId === undefined || isHideRemoveBtn?.(data)
-                        ? ''
-                        : <GridRemoveButton onRemove={() => handleRemove(params, data, params.node.id ?? '', rowId)} />;
-                }
-            }),
+                return (
+                    <button
+                        onClick={() => handleRemove(params, data, params.node.id ?? '', rowId)}
+                        className="retro-remove-btn"
+                    >
+                        삭제
+                    </button>
+                );
+            },
             // '+' 행 추가 버튼
-            ...(hasAddBtn && {
-                headerComponent: () => <GridAddButton onAppend={handleAppend} />
-            })
-        }] : [];
+            headerComponent: () => (
+                // 🚩 수정 2: 추가 버튼 스타일을 다크톤/모던 블루로 변경
+                <button
+                    onClick={handleAppend}
+                    className="retro-add-btn"
+                >
+                    + 추가
+                </button>
+            )
+        }];
 
-        // 상태 컬럼
-        const columnStatus = hasStatusColumn ? [{
+       // 상태 컬럼
+        const columnStatus = [{
             headerName: "상태",
             minWidth: 70,
             maxWidth: 70,
@@ -201,19 +160,30 @@ export default function NewGridFormTable<T extends GridValues>({
             cellRenderer: (params: ICellRendererParams) => {
                 const statusData = statusValue[params.data.status as GridStatus ?? 'default'];
 
-                return <div style={{ color: statusData.color }}>{statusData.text}</div>;
-            }
-        }] : [];
+                if (!statusData.text) return null;
 
+                // 🚩 수정 3: 상태 텍스트 색상을 블랙톤 배경에 맞게 조정
+                const bgColor = statusData.color === 'green' ? '#166534' : '#854D0E'; // Dark Green, Dark Yellow
+                const textColor = statusData.color === 'green' ? '#D9F99D' : '#FEF9C3'; // Light Green, Light Yellow
+
+                return (
+                    <span style={{
+                        padding: '2px 4px',
+                        backgroundColor: bgColor, 
+                        color: textColor,
+                        borderRadius: '4px',
+                        fontSize: '12px',
+                        fontWeight: '600'
+                    }}>
+                        {statusData.text}
+                    </span>
+                );
+            }
+        }];
         // 순번 외 컬럼
         const [noCols, otherCols] = partition(columns, (col) => col.field?.toLowerCase() === 'no');
         // 순번 컬럼
-        const noCol = noCols[0] || null;  // First 'no' column regardless of position
-
-        // 순번이 있고, draggable 이면
-        if(noCol) {
-            noCol.rowDrag = isDraggable;
-        }
+        const noCol = noCols[0] || null;  // 위치에 관계없이 첫 번째 순번 컬럼
 
         const columnFields: (ColDef | ColGroupDef)[] = [
             ...otherCols.map(({ cellRenderer, render, renderFunction, ...others }) => ({
@@ -225,8 +195,8 @@ export default function NewGridFormTable<T extends GridValues>({
                     const fieldValue = field ? data[field] ?? dataDefault[field] : '';
 
                     if (render) {
-                        const fieldName = `dataForm.${rowId}.${field}` as Path<GridFormParams<T>>;
-                        const RHFProps: GridFormTableRHFProps<GridFormParams<T>> = {
+                        const fieldName = `dataForm.${rowId}.${field}` as Path<RHFParams<T>>;
+                        const RHFProps: TableRHFProps<RHFParams<T>> = {
                             name: fieldName,
                             control: methods.control,
                             inputRef: methods.register(fieldName, { value: fieldValue ?? '' }).ref
@@ -265,7 +235,7 @@ export default function NewGridFormTable<T extends GridValues>({
         ];
 
         //'+' 버튼 순서에 따라 첫번 째, 마지막 배치
-        return columnAddOrder === 'first' ? [...columnAdd, ...baseCols] : [...baseCols, ...columnAdd];
+        return [...columnAdd, ...baseCols];
     }, [dataExisting, gridApi, methods]);
     const rowData = useMemo<T[]>(() => {
         return [];
@@ -284,8 +254,8 @@ export default function NewGridFormTable<T extends GridValues>({
     }, [onDelete]);
 
     /**
-     * Handle reset and apply existing data
-     * @param dataExisting Existing rows
+     * 기존 데이터 초기화 및 적용 처리
+     * @param dataExisting 기존 행 데이터
      */
     async function resetAndApplyData(dataExisting: T[]) {
         if (!gridApi) {
@@ -295,8 +265,8 @@ export default function NewGridFormTable<T extends GridValues>({
 
         methods.reset({ dataForm: {} });
 
-        // Ensures the reset completes before proceeding
-        // This allows the UI and state updates to process before moving on
+        // 진행하기 전에 초기화가 완료되도록 보장
+        // 다음 단계로 이동하기 전에 UI 및 상태 업데이트가 처리되도록 함
         await Promise.resolve();
 
         if (dataExisting?.length) {
@@ -315,10 +285,10 @@ export default function NewGridFormTable<T extends GridValues>({
     }
 
     /**
-     * Handle form submission
-     * @param data multi data params
+     * 폼 제출 처리
+     * @param data 다중 데이터 파라미터
      */
-    async function handleFormSubmit(data: GridFormParams<T>) {
+    async function handleFormSubmit(data: RHFParams<T>) {
         const dataForm = data.dataForm ?? [];
         const filteredData = Object.values(dataForm);
         const cleanedData = filteredData.map((item) => omit(item, ['id', 'rowId', 'status', 'addBtn']));
@@ -328,20 +298,20 @@ export default function NewGridFormTable<T extends GridValues>({
     }
 
     /**
-     * Handle form errors with alert
-     * @param errors list of input errors
+     * 알림을 통한 폼 에러 처리
+     * @param errors 입력 에러 목록
      */
     function handleFormError(errors: FieldErrors) {
         onFormError?.(errors);
-        formErrors<GridFormParams<T>>(errors, methods);
+        formErrors<RHFParams<T>>(errors, methods);
     }
 
     /**
-     * Handle form delete
+     * 폼 삭제 처리
      * @param params
-     * @param nodeId node unique id
-     * @param rowId row unique id
-     * @param data row data information
+     * @param nodeId 노드 고유 ID
+     * @param rowId 행 고유 ID
+     * @param data 행 데이터 정보
      */
     function handleRemove(params: ICellRendererParams, data: T, nodeId: string, rowId: string) {
         if (data[dataUniqueId]) {
@@ -356,15 +326,15 @@ export default function NewGridFormTable<T extends GridValues>({
     }
 
     /**
-     * Handle form delete from API
+     * API를 통한 폼 삭제 처리
      * @param params
-     * @param nodeId node unique id
-     * @param rowId row unique id
-     * @param uniqueId primary id
+     * @param nodeId 노드 고유 ID
+     * @param rowId 행 고유 ID
+     * @param uniqueId 기본키 ID
      */
     async function handleDelete(params: ICellRendererParams, nodeId: string, rowId: string, uniqueId: string) {
         let isSuccess = '';
-
+        
         if (customDeleteFunction) {
             isSuccess = await customDeleteFunction(uniqueId, params);
         }
@@ -372,7 +342,7 @@ export default function NewGridFormTable<T extends GridValues>({
             isSuccess = await deleteFunction?.(uniqueId)
                 .then(({ data }) => data.result);
         }
-
+        
         if (isSuccess) {
             alert(isSuccess)
             cleanupFieldArray(nodeId, rowId);
@@ -381,9 +351,9 @@ export default function NewGridFormTable<T extends GridValues>({
     }
 
     /**
-     * Cleanup field array
-     * @param nodeId node unique id
-     * @param rowId row unique id
+     * 필드 배열 정리
+     * @param nodeId 노드 고유 ID
+     * @param rowId 행 고유 ID
      */
     function cleanupFieldArray(nodeId: string, rowId: string) {
         if (!gridApi) {
@@ -397,16 +367,17 @@ export default function NewGridFormTable<T extends GridValues>({
         }
 
         gridApi.applyTransaction({ remove: [rowNode.data] });
-        methods.unregister(`dataForm.${rowId}` as Path<GridFormParams<T>>);
+        methods.unregister(`dataForm.${rowId}` as Path<RHFParams<T>>);
     }
 
-    // Append new data to the grid form
+    // 그리드 폼에 새 데이터 추가
     function handleAppend() {
         if (customAddFunction) {
             customAddFunction();
 
             return;
         }
+        
         if (!gridApi) {
             return;
         }
@@ -422,10 +393,10 @@ export default function NewGridFormTable<T extends GridValues>({
     }
 
     /**
-     * Handle field input value change
-     * @param event event source
-     * @param field field name
-     * @param params row data information
+     * 필드 입력 값 변경 처리
+     * @param field 필드명
+     * @param params 행 데이터 정보
+     * @param event 이벤트 소스
      */
     function handleInputChange(field: string, params: ICellRendererParams, event?: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
         if (!gridApi) {
@@ -468,45 +439,8 @@ export default function NewGridFormTable<T extends GridValues>({
     }
 
     /**
-     * Handle sort changed
-     * @param params event source
-     */
-    function handleSortChanged(params: SortChangedEvent) {
-        if (isRestoringSortRef.current) {
-            // 복구 중이면 alert 안 띄우고 flag 해제 후 종료
-            isRestoringSortRef.current = false;
-
-            return;
-        }
-
-        // 수정이나 신규 상태인 로우 있는지 확인
-        if (gridGetHasUnsavedChangeGrid([gridApi])) {
-            isRestoringSortRef.current = true; // 정렬 복구 (이벤트 재발 방지를 위해 flag 사용)
-
-            alert("테이블에 신규 또는 수정 중인 항목이 있어 정렬을 진행할 수 없습니다.")
-            // addAlert({ message: t('sort_not_allowed_msg') });
-            params.api.applyColumnState({ state: prevSortModelRef.current });
-
-            return;
-        }
-
-        // 현재 정렬 상태 저장
-        prevSortModelRef.current = params.api.getColumnState();
-
-        const colState = params.api.getColumnState();
-        const sortRow = colState
-            .filter((s) => s.sort !== null)
-            .map((s) => ({
-                sortName: s.colId,
-                isASC: s.sort === 'asc'
-            }));
-
-        sortProps?.setSort?.(sortRow);
-    }
-
-    /**
-     * Handle table refresh
-     * @param params row data information
+     * 테이블 새로고침 처리
+     * @param params 행 데이터 정보
      */
     function handleRowRefresh(params: ICellRendererParams) {
         params.api.refreshCells({
@@ -516,8 +450,8 @@ export default function NewGridFormTable<T extends GridValues>({
     }
 
     /**
-     * Handle when grid has initialised
-     * @param params event source
+     * 그리드 초기화 완료 시 처리
+     * @param params 이벤트 소스
      */
     function handleGridReady(params: GridReadyEvent) {
         params.api.sizeColumnsToFit();
@@ -527,21 +461,21 @@ export default function NewGridFormTable<T extends GridValues>({
 
     /**
      * 행 드래그 이동 이벤트 핸들러
-     * @param event event source
+     * @param event 이벤트 소스
      * */
     function handleRowDragMove(event: RowDragMoveEvent) {
-        // 순번 컬럼 데이터 제번
+        // 순번 컬럼 데이터 갱신
         event.api.refreshCells({ columns: ['no'], force: true });
     }
 
     /**
      * 행 클릭 이벤트 핸들러
-     * @param event event sorce
+     * @param event 이벤트 소스
      */
     function handleRowClick(event: RowClickedEvent) {
         const targetEl = event.event?.target as HTMLElement;
 
-        // 삭제 버튼 클릭시 로우 클릭 이벤트 타지 않게 수정
+        // 삭제 버튼 클릭 시 행 클릭 이벤트가 발생하지 않도록 수정
         if (targetEl?.className?.includes('remove-btn')) {
             return;
         }
@@ -550,25 +484,22 @@ export default function NewGridFormTable<T extends GridValues>({
     }
     
     return (
-        <div className="h-full">
-            {/* 디버깅용 삭제 x */}
+        <div style={{ height: '100%', width: '100%' }}>
+            {/* 디버깅 */}
             {/* <DevTool control={methods.control}/> */}
-            <div className={`ag-theme-alpine !rounded-[0px] ${borderMode}`}>
+            <div className='ag-theme-alpine' style={{ height: '100%', width: '100%' }}>
                 <NewGridTable
                     animateRows={false}
                     rowData={rowData}
-                    rowDragManaged={isDraggable}
                     onRowDragMove={handleRowDragMove}
                     columnDefs={columnDefs}
-                    sortProps={sortProps}
                     onGridReady={handleGridReady}
-                    onSortChanged={handleSortChanged}
                     onRowClicked={handleRowClick}
                     {...agGridProps}
                 />
             </div>
             {submitRef && (
-                <button ref={submitRef} type="submit" className="hidden" onClick={methods.handleSubmit(handleFormSubmit, handleFormError)}/>
+                <button ref={submitRef} type="submit" style={{ display: 'none' }} onClick={methods.handleSubmit(handleFormSubmit, handleFormError)}/>
             )}
         </div>
     );

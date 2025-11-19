@@ -1,4 +1,4 @@
-import { GridFormTableProps } from '@components/grid-form/GridFormTable';
+import { RHFTableProps } from '@components/grid-form/GridFormTable';
 import { FieldProps } from '@type/field.type';
 import { MakeOptional } from '@type/common.type';
 import { ColDef, ICellRendererParams } from 'ag-grid-community';
@@ -46,7 +46,7 @@ export interface CommRHFProps<T extends FieldValues = FieldValues> extends Field
 }
 
 export interface GridFormProps<MultiData extends FieldValues, Data extends FieldValues> {
-    gridProps: MakeOptional<GridFormTableProps<MultiData, Data>, 'defaultRows' | 'fields' | 'columns' | 'methods' | 'unique' | 'onAppend' | 'onRemove'>;
+    gridProps: MakeOptional<RHFTableProps<MultiData, Data>, 'defaultRows' | 'fields' | 'columns' | 'methods' | 'unique' | 'onAppend' | 'onRemove'>;
     methods: UseFormReturn<MultiData>;
 }
 
@@ -56,7 +56,7 @@ export interface GridFormData {
     status?: GridStatus
 }
 
-export interface GridFormParams<TData> {
+export interface RHFParams<TData> {
     data: TData[];
 }
 
