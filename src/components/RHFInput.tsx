@@ -35,11 +35,14 @@ export default function RHFInput<T extends FieldValues>({
                 {...props} 
                 className={classMerge("w-full", 
                     props.className,
-                    error ? 'border-[red] border' : ''
+                    error ? '!border-[red] !border' : ''
                 )}
                 style={{
                     width: '100%',
                     outline: 'none',
+                    background: '#1a1a1a',
+                    border:'1px solid #ffff00 !important',
+                    color: '#ffff00',
                     padding: '4px'
                 }}
                 type="text" 

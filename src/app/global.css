@@ -18,8 +18,13 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+body {
+  background: #0000c6;
+}
+
 * {
   font-family: 'PixelatedFont';
+  box-sizing: border-box;
 }
 
 ::-webkit-scrollbar {
@@ -37,7 +42,7 @@
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background-color: #555;
+  background-color: #555 !important;
 }
 
 /* disabled 일때도 인풋 클릭되게 하는 속성 */
@@ -47,28 +52,22 @@ input[disabled] {
 
 
 .ag-theme-alpine {
-  --ag-header-foreground-color: #FF00FF;
-  /* 네온 마젠타 */
+
   --ag-background-color: #1A1A1A;
-  /* 거의 검은색 */
-  --ag-foreground-color: #E0E0E0;
   /* 밝은 회색 텍스트 */
 
   --ag-header-height: 48px;
-  --ag-header-background-color: #00FF00;
-  /* 네온 그린 헤더 */
   --ag-header-foreground-color: #1A1A1A;
-  /* 헤더 텍스트는 어둡게 */
 
   --ag-row-height: 48px;
-  --ag-border-color: #333333;
+  /* --ag-border-color: #092f59; */
   /* 어두운 경계선 */
   --ag-row-border-color: #333333;
   /* 행 경계선 */
 
-  --ag-row-hover-color: #FF00FF;
+  --ag-row-hover-color: #0000c620;
   /* 마우스 오버 시 네온 마젠타 */
-  --ag-selected-row-background-color: #00FFFF;
+  --ag-selected-row-background-color: #ffff002c;
   /* 선택 시 네온 시안 */
 
   /* 홀수/짝수 행 배경은 진한 블랙 유지 */
@@ -83,25 +82,22 @@ input[disabled] {
 /* ---------------------------------- */
 /* AG Grid 기본 셀/헤더 스타일 */
 /* ---------------------------------- */
-.ag-header-cell-label {
-  font-weight: 400;
-  justify-content: center;
-  text-shadow: 0 0 5px #00FF00, 0 0 10px #00FF00;
+.ag-header-cell {
+  border: 1px solid #0000c6;
 }
 
-/* AG Grid 헤더 셀의 텍스트 레이블 클래스 */
 .ag-header-cell-label {
   font-weight: bold;
-  justify-content: center;
 
-  /* 🚩 직접 색상 지정 (변수보다 우선순위를 가집니다) */
-  color: #FF00FF;
+  justify-content: center;
+  color: #ffff00;
 }
+
 
 .ag-cell {
   display: flex;
   align-items: center;
-  padding-left: 12px;
+  border: 1px solid #0000c6;
   padding-right: 12px;
 }
 
@@ -112,7 +108,7 @@ input[disabled] {
 /* [+] 추가 버튼 */
 .retro-add-btn {
   padding: 4px 12px;
-  background-color: #00FFFF;
+  background-color: #ffff00;
   /* 네온 시안 */
   color: #1A1A1A;
   /* 버튼 텍스트는 어둡게 */
@@ -121,12 +117,10 @@ input[disabled] {
   cursor: pointer;
   font-size: 10px;
   font-weight: bold;
-  /* font-family는 Next.js에서 처리하므로 제거 */
   transition: all 0.1s;
-  box-shadow: 4px 4px 0px 0px #FF00FF;
+  box-shadow: 4px 4px 0px 0px #ffff00;
   transform: translate(-2px, -2px);
   line-height: 1.5;
-  text-shadow: 0 0 3px #1A1A1A;
 }
 
 .retro-add-btn:active {
@@ -137,20 +131,18 @@ input[disabled] {
 /* [X] 삭제 버튼 */
 .retro-remove-btn {
   padding: 4px 12px;
-  background-color: #FF00FF;
+  background-color: #0000c6;
   /* 네온 마젠타 */
-  color: #1A1A1A;
+  color: #fff;
   border: 2px solid #000000;
   border-radius: 2px;
   cursor: pointer;
   font-size: 10px;
   font-weight: bold;
-  /* font-family는 Next.js에서 처리하므로 제거 */
   transition: all 0.1s;
-  box-shadow: 4px 4px 0px 0px #00FFFF;
+  box-shadow: 4px 4px 0px 0px #0000c6;
   transform: translate(-2px, -2px);
   line-height: 1.5;
-  text-shadow: 0 0 3px #1A1A1A;
 }
 
 .retro-remove-btn:active {

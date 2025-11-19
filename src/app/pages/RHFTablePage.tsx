@@ -34,7 +34,7 @@ export default function RHFTablePage() {
     ]);
     const columns: RHFTableColumnProps<UserData>[] = [
         { 
-            headerName: 'Name', 
+            headerName: '이름', 
             field: 'name',
             render: ({ RHFProps }) => {
                 return <RHFInput
@@ -46,7 +46,7 @@ export default function RHFTablePage() {
             }
         },
         { 
-            headerName: 'phone', 
+            headerName: '전화번호', 
             field: 'phone',
             render: ({ RHFProps }) => {
                 return <RHFInput
@@ -63,15 +63,15 @@ export default function RHFTablePage() {
         <div style={{
             padding: '40px',
             minHeight: '100vh',
-            backgroundColor: '#f9fafb'
+            backgroundColor: '#000'
         }}>
             <div style={{
                 maxWidth: '1200px',
                 margin: '0 auto',
-                backgroundColor: 'white',
+                backgroundColor: '#000',
                 borderRadius: '12px',
                 padding: '32px',
-                boxShadow: '0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)'
+                // boxShadow: '0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)'
             }}>
                 <div style={{
                     marginBottom: '24px'
@@ -79,14 +79,14 @@ export default function RHFTablePage() {
                     <h1 style={{
                         fontSize: '24px',
                         fontWeight: '700',
-                        color: '#111827',
+                        color: '#ffff00',
                         marginBottom: '8px'
                     }}>
                         사용자 관리
                     </h1>
                     <p style={{
                         fontSize: '14px',
-                        color: '#6b7280'
+                        color: '#ffff00'
                     }}>
                         사용자 정보를 추가, 수정, 삭제할 수 있습니다.
                     </p>
@@ -96,9 +96,10 @@ export default function RHFTablePage() {
                     width: '100%',
                     height: '400px',
                     marginBottom: '24px',
-                    border: '1px solid #e5e7eb',
+                    border: '1px solid #0000c6',
                     borderRadius: '8px',
-                    overflow: 'hidden'
+                    overflow: 'hidden',
+                    boxShadow: '10px 10px 0px 0px #0000c6'
                 }}>
                     <RHFTable<UserData>
                         dataUniqueId='userIndex'
@@ -125,10 +126,11 @@ export default function RHFTablePage() {
                         onClick={() => submitRef.current?.click()}
                         style={{
                             padding: '10px 24px',
-                            backgroundColor: '#3b82f6',
-                            color: 'white',
-                            border: 'none',
-                            borderRadius: '6px',
+                            border: '2px solid #ffff00',
+                            background: '#000',
+                            color: '#ffff00',
+                            // border: 'none',
+                            borderRadius: '4px',
                             cursor: 'pointer',
                             fontSize: '14px',
                             fontWeight: '600',
