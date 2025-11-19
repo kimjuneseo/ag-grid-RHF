@@ -39,8 +39,7 @@ export default function RHFInput<T extends FieldValues>({
                 )}
                 style={{
                     width: '100%',
-                    borderRadius: '5px',
-                    outline: 'NONE',
+                    outline: 'none',
                     padding: '4px'
                 }}
                 type="text" 

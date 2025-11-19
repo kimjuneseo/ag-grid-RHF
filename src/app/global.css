@@ -2,10 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-@font-face {
-  font-family: 'PixelatedFont';
-}
-
 
 :root {
   font-family: PixelatedFont, Avenir, Helvetica, Arial, sans-serif;
@@ -20,6 +16,10 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  font-family: 'PixelatedFont';
 }
 
 ::-webkit-scrollbar {
@@ -91,15 +91,11 @@ input[disabled] {
 
 /* AG Grid 헤더 셀의 텍스트 레이블 클래스 */
 .ag-header-cell-label {
-  font-weight: 400;
+  font-weight: bold;
   justify-content: center;
 
   /* 🚩 직접 색상 지정 (변수보다 우선순위를 가집니다) */
   color: #FF00FF;
-  /* 네온 옐로우로 강제 변경 */
-
-  /* 레트로 네온 그림자 효과는 유지 */
-  text-shadow: 0 0 5px #FFEA00, 0 0 10px #FFEA00;
 }
 
 .ag-cell {
